@@ -9,6 +9,7 @@ import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.qmatic.qp.domain.configuration.branch.BranchGroup;
+import com.qmatic.qp.domain.configuration.branch.SmallBranch;
 import com.qmatic.qp.domain.configuration.user.Role;
 import org.json.JSONObject;
 
@@ -16,10 +17,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.qmatic.uk.Properties.PASSWORD;
+import static com.qmatic.uk.Properties.URL;
+
 public class REST {
 
-    public static final String URL = "https://redacted";
-    public static final String PASSWORD = "redacted";
 
     static {
         Unirest.setObjectMapper(new ObjectMapper() {
@@ -79,6 +81,13 @@ public class REST {
                 .asJson();
         System.out.println(asObject.getStatus());
         return asObject.getBody();
+    }
+
+    public static List<SmallBranch> getBranches() throws UnirestException {
+        HttpResponse<SmallBranch[]> asObject = Unirest.get(URL + "/qsystem/rest/config/branches/")
+                .basicAuth("superadmin", PASSWORD)
+                .asObject(SmallBranch[].class);
+        return Arrays.asList(asObject.getBody());
     }
 
 }
